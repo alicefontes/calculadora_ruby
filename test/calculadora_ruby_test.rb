@@ -1,11 +1,19 @@
 require 'test_helper'
 
 class CalculadoraRubyTest < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::CalculadoraRuby::VERSION
+  def test_adicao_basica
+    calculadora = CalculadoraRuby::Calc.new
+    result = calculadora.calcular '1+1'
+    assert_equal 2, result
   end
-
-  def test_it_does_something_useful
-    assert false
+  def test_subtracao_basica
+    calculadora = CalculadoraRuby::Calc.new
+    result = calculadora.calcular '2-1'
+    assert_equal 1, result
+  end
+  def test_subtracao_negativa
+    calculadora = CalculadoraRuby::Calc.new
+    result = calculadora.calcular '0-1'
+    assert_equal -1, result
   end
 end

@@ -16,19 +16,32 @@ module CalculadoraRuby
 #      puts @@calc_array
 #    end
 
-#identifica a posicao do sinal e dos numeros a serem operados
+#teste
+
     def operacoes_calc
-      index = @calc_array.index { |x| x == "+" || x == "-" }
+      index = @calc_array.index { |x| x == "*" || x == "/" || x == "+" || x == '-' }
       @n1 = @calc_array[index - 1]
       @op = @calc_array[index]
       @n2 = @calc_array[index + 1]
     end
+
+#identifica a posicao do sinal e dos numeros a serem operados
+    # def operacoes_calc
+    #   index = @calc_array.index { |x| x == "+" || x == "-" }
+    #   @n1 = @calc_array[index - 1]
+    #   @op = @calc_array[index]
+    #   @n2 = @calc_array[index + 1]
+    # end
 
     def achaoperacao
       if @op === "+"
         soma @n1.to_i, @n2.to_i
       elsif @op === "-"
         subtracao @n1.to_i, @n2.to_i
+      elsif @op === '*'
+        multiplicacao @n1.to_i, @n2.to_i
+      elsif @op === '/'
+        divisao @n1.to_i, @n2.to_i
       else
         'erro'
       end
@@ -37,8 +50,17 @@ module CalculadoraRuby
     def soma n1, n2
       n1 + n2
     end
+
     def subtracao n1, n2
       n1 - n2
-   end
+    end
+
+    def multiplicacao n1, n2
+      n1 * n2
+    end
+
+    def divisao n1, n2
+      n1 / n2
+    end
   end
 end

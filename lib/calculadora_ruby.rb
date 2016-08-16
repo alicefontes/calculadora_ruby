@@ -22,6 +22,7 @@ module CalculadoraRuby
 
       puts "Resultado: "
       puts @valorTotal
+      @valorTotal
     end
 
     def fazMultiplicacoes

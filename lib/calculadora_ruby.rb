@@ -5,11 +5,9 @@ module CalculadoraRuby
   class Calc
 
     def initialize
-
     end
 
     def calcular calc_string
-
       @calc_array = calc_string.split('')
       # puts "calc_array: "
       # puts @calc_array
@@ -24,11 +22,9 @@ module CalculadoraRuby
 
       puts "Resultado: "
       puts @valorTotal
-
     end
 
     def fazMultiplicacoes
-
     	index = @calc_array.index("*")
 
     	if index != nil
@@ -43,13 +39,11 @@ module CalculadoraRuby
 	    		@calc_array.delete_at(index)
 
 	    		fazMultiplicacoes
-
 	    	end
-		end
+		  end
     end
 
     def fazDivisoes
-
     	index = @calc_array.index("/")
 
     	if index != nil
@@ -63,14 +57,12 @@ module CalculadoraRuby
 	    		@calc_array.delete_at(index + 1)
 	    		@calc_array.delete_at(index)
 
-	    		faDivisoes
-
+	    		fazDivisoes
 	    	end
 	    end
     end
 
     def fazAdicoes
-
     	index = @calc_array.index("+")
 
     	if index != nil
@@ -98,13 +90,11 @@ module CalculadoraRuby
 	    		#puts @calc_array
 
 	    		fazAdicoes
-
 	    	end
-		end
+		  end
     end
 
     def fazSubtracoes
-
     	index = @calc_array.index("-")
 
     	if index != nil
@@ -119,10 +109,9 @@ module CalculadoraRuby
 	    		@calc_array.delete_at(index)
 
 	    		fazSubtracoes
-
 	    	end
 	    end
-	     end
+	  end
 
   end
 end

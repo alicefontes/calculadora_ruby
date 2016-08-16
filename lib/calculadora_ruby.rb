@@ -1,107 +1,128 @@
 require "calculadora_ruby/version"
 
 module CalculadoraRuby
+
   class Calc
+
     def initialize
+
     end
 
     def calcular calc_string
+
       @calc_array = calc_string.split('')
-      operacao_prioritaria
-      operacao_comum
-    end
-#trata aqui em cima p numeros maiores q 9
+      # puts "calc_array: "
+      # puts @calc_array
+      @valorTotal = 0
 
-    def operacao_prioritaria
-      for numero in @calc_array
-      # while @calc_array.index != @calc_array.length
-    #  while @calc_array.index <= @calc_array.length
-        if numero == "*" || numero == "/"
-        # if @calc_array.each == "*" || @calc_array.each == "/"
-          sinal_prioritario
-          # opera
-        end
-      end
-    end
+      fazMultiplicacoes
+      fazDivisoes
+      fazAdicoes
+      fazSubtracoes
 
-    def operacao_comum
-      for numero in @calc_array
-      # while @calc_array.each != nil
-        # if @calc_array.each == "+" || @calc_array.each == "-"
-        if numero == "+" || numero == "-"
-          sinal_comum
-          # opera
-        end
-      end
+      @valorTotal = @calc_array[0].to_i
+
+      puts "Resultado: "
+      puts @valorTotal
+
     end
 
-    def sinal_prioritario
-      @sinal = @calc_array.index do |sinaleach|
-        sinaleach == "*" || sinaleach == "/"
-      end
-      organiza_operacao
-      opera
+    def fazMultiplicacoes
+
+    	index = @calc_array.index("*")
+
+    	if index != nil
+	    	if index >= 0
+
+	    		primeiroNumero = @calc_array[index - 1].to_i
+	    		segundoNumero = @calc_array[index + 1].to_i
+
+	    		@calc_array[index -1] = primeiroNumero * segundoNumero
+
+	    		@calc_array.delete_at(index + 1)
+	    		@calc_array.delete_at(index)
+
+	    		fazMultiplicacoes
+
+	    	end
+		end
     end
 
-    def sinal_comum
-      @sinal = @calc_array.index do |sinaleach|
-        sinaleach == "+" || sinaleach == "-"
-      end
-      organiza_operacao
-      opera
+    def fazDivisoes
+
+    	index = @calc_array.index("/")
+
+    	if index != nil
+	    	if index >= 0
+
+	    		primeiroNumero = @calc_array[index - 1].to_i
+	    		segundoNumero = @calc_array[index + 1].to_i
+
+	    		@calc_array[index -1] = primeiroNumero / segundoNumero
+
+	    		@calc_array.delete_at(index + 1)
+	    		@calc_array.delete_at(index)
+
+	    		faDivisoes
+
+	    	end
+	    end
     end
 
-    def organiza_operacao
-      @n1 = @calc_array[@sinal - 1]
-      @op = @calc_array[@sinal]
-      @n2 = @calc_array[@sinal + 1]
+    def fazAdicoes
+
+    	index = @calc_array.index("+")
+
+    	if index != nil
+	    	if index >= 0
+
+	    		primeiroNumero = @calc_array[index - 1].to_i
+	    		#puts "primeiroNumero: "
+	    		#puts primeiroNumero
+
+	    		segundoNumero = @calc_array[index + 1].to_i
+	    		#puts "segundoNumero: "
+	    		#puts segundoNumero
+
+	    		#puts "soma: "
+	    		#puts primeiroNumero + segundoNumero
+
+	    		@calc_array[index - 1] = primeiroNumero + segundoNumero
+	    		#puts "novo item no index: "
+	    		#puts @calc_array[index - 1]
+
+	    		@calc_array.delete_at(index + 1)
+	    		@calc_array.delete_at(index)
+
+	    		#puts "novoarray: "
+	    		#puts @calc_array
+
+	    		fazAdicoes
+
+	    	end
+		end
     end
 
+    def fazSubtracoes
 
-    # def operacoes_calc
-    #   index = @calc_array.index { |x| x == "*" || x == "/" || x == "+" || x == '-' }
-    #   @n1 = @calc_array[index - 1]
-    #   @op = @calc_array[index]
-    #   @n2 = @calc_array[index + 1]
-    # end
+    	index = @calc_array.index("-")
 
+    	if index != nil
+	    	if index >= 0
 
-#identifica a posicao do sinal e dos numeros a serem operados
-    # def operacoes_calc
-    #   index = @calc_array.index { |x| x == "+" || x == "-" }
-    #   @n1 = @calc_array[index - 1]
-    #   @op = @calc_array[index]
-    #   @n2 = @calc_array[index + 1]
-    # end
+	    		primeiroNumero = @calc_array[index - 1].to_i
+	    		segundoNumero = @calc_array[index + 1].to_i
 
-    def opera
-      if @op === "+"
-        soma @n1.to_i, @n2.to_i
-      elsif @op === "-"
-        subtracao @n1.to_i, @n2.to_i
-      elsif @op === '*'
-        multiplicacao @n1.to_i, @n2.to_i
-      elsif @op === '/'
-        divisao @n1.to_i, @n2.to_i
-      else
-        'erro'
-      end
-    end
+	    		@calc_array[index -1] = primeiroNumero - segundoNumero
 
-    def soma n1, n2
-      n1 + n2
-    end
+	    		@calc_array.delete_at(index + 1)
+	    		@calc_array.delete_at(index)
 
-    def subtracao n1, n2
-      n1 - n2
-    end
+	    		fazSubtracoes
 
-    def multiplicacao n1, n2
-      n1 * n2
-    end
+	    	end
+	    end
+	     end
 
-    def divisao n1, n2
-      n1 / n2
-    end
   end
 end

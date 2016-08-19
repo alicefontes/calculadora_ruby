@@ -1,118 +1,225 @@
-require "calculadora_ruby/version"
+require "./calculadora_ruby/version"
 
 module CalculadoraRuby
 
-  class Calc
+	class Calc
 
-    def initialize
-    end
+		def initialize
+		end
 
-    def calcular calc_string
-      @calc_array = calc_string.split('')
-      # puts "calc_array: "
-      # puts @calc_array
-      @valorTotal = 0
+		def calcular calc_string
+			@calc_array = calc_string.split('')
+			# puts "calc_array: "
+			# puts @calc_array
 
-      fazMultiplicacoes
-      fazDivisoes
-      fazAdicoes
-      fazSubtracoes
+			@valorTotal = 0
+			# puts "incializa: "
+			# puts @valorTotal
 
-      @valorTotal = @calc_array[0].to_i
+			operacoesPrioritarias
+			operacoesSecundarias
 
-      puts "Resultado: "
-      puts @valorTotal
-      @valorTotal
-    end
+			@valorTotal = @calc_array[0].to_f
 
-    def fazMultiplicacoes
-    	index = @calc_array.index("*")
+			puts "---valorTotal: "
+			puts @valorTotal
 
-    	if index != nil
-	    	if index >= 0
+			return @valorTotal
+		end
 
-	    		primeiroNumero = @calc_array[index - 1].to_i
-	    		segundoNumero = @calc_array[index + 1].to_i
+		def operacoesPrioritarias
+			indexMultiplicacao = @calc_array.index("*")
+			indexDivisao = @calc_array.index("/")
 
-	    		@calc_array[index -1] = primeiroNumero * segundoNumero
+			if(indexDivisao != nil && indexMultiplicacao != nil)
+				if(indexDivisao < indexMultiplicacao)
+					fazDivisoes
+				else
+					fazMultiplicacoes
+				end
+			elsif(indexDivisao != nil && indexMultiplicacao == nil)
+				fazDivisoes
+			elsif(indexDivisao == nil && indexMultiplicacao != nil)
+				fazMultiplicacoes
+			end
+		end
 
-	    		@calc_array.delete_at(index + 1)
-	    		@calc_array.delete_at(index)
+		def operacoesSecundarias
+			indexAdicao = @calc_array.index("+")
+			indexSubtracao = @calc_array.index("-")
 
-	    		fazMultiplicacoes
-	    	end
-		  end
-    end
+			if(indexSubtracao != nil && indexAdicao != nil)
+				if(indexSubtracao < indexAdicao)
+					fazSubtracoes
+				else
+					fazAdicoes
+				end
+			elsif(indexSubtracao != nil && indexAdicao == nil)
+				fazSubtracoes
+			elsif(indexSubtracao == nil && indexAdicao != nil)
+				fazAdicoes
+			end
+		end
 
-    def fazDivisoes
-    	index = @calc_array.index("/")
+		def buscaPrimeiroNumeroIndex index
+			index.downto(0) do |i|
+				character = @calc_array[i];
 
-    	if index != nil
-	    	if index >= 0
+        if character == "*" || character == "/" || character == "+" || character == "-"
+					return i + 1
+				end
+			end
 
-	    		primeiroNumero = @calc_array[index - 1].to_i
-	    		segundoNumero = @calc_array[index + 1].to_i
+			return 0
+		end
 
-	    		@calc_array[index -1] = primeiroNumero / segundoNumero
+		def buscaSegundoNumeroIndex index
+			(index..(@calc_array.length - 1)).each do |i|
 
-	    		@calc_array.delete_at(index + 1)
-	    		@calc_array.delete_at(index)
+				character = @calc_array[i]
 
-	    		fazDivisoes
-	    	end
-	    end
-    end
+				if character == "*" || character == "/" || character == "+" || character == "-"
+					return i - 1
+				end
+			end
 
-    def fazAdicoes
-    	index = @calc_array.index("+")
+			return @calc_array.length - 1
+		end
 
-    	if index != nil
-	    	if index >= 0
+		def buscaNumeroNoRange(indexInicial, indexFinal)
+			primeiroNumero = "0"
+			(indexInicial..indexFinal).each do |i|
+				character = @calc_array[i]
+				primeiroNumero = primeiroNumero + character
+			end
 
-	    		primeiroNumero = @calc_array[index - 1].to_i
-	    		#puts "primeiroNumero: "
-	    		#puts primeiroNumero
+			return primeiroNumero.to_f
+		end
 
-	    		segundoNumero = @calc_array[index + 1].to_i
-	    		#puts "segundoNumero: "
-	    		#puts segundoNumero
+		def deletaObjetoNoRangeDoArray(fromIndex, toIndex)
+			# puts "array a remover:"
+			# puts @calc_array
 
-	    		#puts "soma: "
-	    		#puts primeiroNumero + segundoNumero
+			toIndex.downto(fromIndex) do |i|
+				# puts "i: "
+				# puts i
+				@calc_array.delete_at(i)
+				# puts "array:"
+				# @calc_array
+			end
+		end
 
-	    		@calc_array[index - 1] = primeiroNumero + segundoNumero
-	    		#puts "novo item no index: "
-	    		#puts @calc_array[index - 1]
+		def fazMultiplicacoes
+			index = @calc_array.index("*")
 
-	    		@calc_array.delete_at(index + 1)
-	    		@calc_array.delete_at(index)
+			if index != nil
+				if index >= 0
 
-	    		#puts "novoarray: "
-	    		#puts @calc_array
+					primeiroIndex = buscaPrimeiroNumeroIndex (index - 1)
+					segundoIndex = buscaSegundoNumeroIndex (index + 1)
 
-	    		fazAdicoes
-	    	end
-		  end
-    end
+					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
+					segundoNumero = buscaNumeroNoRange((index + 1), segundoIndex)
 
-    def fazSubtracoes
-    	index = @calc_array.index("-")
+					resultado = primeiroNumero * segundoNumero
 
-    	if index != nil
-	    	if index >= 0
+					@calc_array[primeiroIndex] = "#{resultado}"
 
-	    		primeiroNumero = @calc_array[index - 1].to_i
-	    		segundoNumero = @calc_array[index + 1].to_i
+					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
 
-	    		@calc_array[index -1] = primeiroNumero - segundoNumero
+					operacoesPrioritarias
+				end
+			end
+		end
 
-	    		@calc_array.delete_at(index + 1)
-	    		@calc_array.delete_at(index)
+		def fazDivisoes
+			index = @calc_array.index("/")
 
-	    		fazSubtracoes
-	    	end
-	    end
-	  end
+			if index != nil
+				if index >= 0
 
-  end
+					primeiroIndex = buscaPrimeiroNumeroIndex(index - 1)
+					segundoIndex = buscaSegundoNumeroIndex(index + 1)
+
+					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
+					segundoNumero = buscaNumeroNoRange((index + 1), segundoIndex)
+
+					resultado = primeiroNumero / segundoNumero
+
+					@calc_array[primeiroIndex] = "#{resultado}"
+
+					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
+
+					operacoesPrioritarias
+				end
+			end
+		end
+
+		def fazAdicoes
+
+			index = @calc_array.index("+")
+
+			if index != nil
+				if index >= 0
+
+					primeiroIndex = buscaPrimeiroNumeroIndex (index - 1)
+					# puts "primeiroIndex: "
+					# puts primeiroIndex
+
+					segundoIndex = buscaSegundoNumeroIndex (index + 1)
+					# puts "segundoIndex: "
+					# puts segundoIndex
+
+					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
+					# puts "primeiroNumero: "
+					# puts primeiroNumero
+
+					segundoNumero = buscaNumeroNoRange((index + 1), segundoIndex)
+					# puts "segundoNumero: "
+					# puts segundoNumero
+
+					resultado = primeiroNumero + segundoNumero
+					# puts "resultado: "
+					# puts resultado
+
+					@calc_array[primeiroIndex] = "#{resultado}"
+					# puts "novo item no index: "
+					# puts @calc_array[primeiroIndex]
+
+					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
+
+					# puts "novoarray: "
+					# puts @calc_array
+
+					operacoesSecundarias
+
+				end
+			end
+		end
+
+		def fazSubtracoes
+			index = @calc_array.index("-")
+
+			if index != nil
+				if index >= 0
+
+					primeiroIndex = buscaPrimeiroNumeroIndex (index - 1)
+					segundoIndex = buscaSegundoNumeroIndex (index + 1)
+
+					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
+					segundoNumero = buscaNumeroNoRange((index + 1) , segundoIndex)
+
+					resultado = primeiroNumero - segundoNumero
+
+					@calc_array[primeiroIndex] = "#{resultado}"
+
+					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
+
+					operacoesSecundarias
+
+				end
+			end
+		end
+
+	end
 end

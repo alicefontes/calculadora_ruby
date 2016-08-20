@@ -1,4 +1,4 @@
-require "./calculadora_ruby/version"
+require "calculadora_ruby/version"
 
 module CalculadoraRuby
 

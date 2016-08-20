@@ -9,22 +9,18 @@ module CalculadoraRuby
 
 		def calcular calc_string
 			@calc_array = calc_string.split('')
-			# puts "calc_array: "
-			# puts @calc_array
 
-			@valorTotal = 0
-			# puts "incializa: "
-			# puts @valorTotal
+			valorTotal = 0
 
 			operacoesPrioritarias
 			operacoesSecundarias
 
-			@valorTotal = @calc_array[0].to_f
+			valorTotal = @calc_array[0].to_f
 
 			puts "---valorTotal: "
-			puts @valorTotal
+			puts valorTotal
 
-			return @valorTotal
+			return valorTotal
 		end
 
 		def operacoesPrioritarias
@@ -33,14 +29,14 @@ module CalculadoraRuby
 
 			if(indexDivisao != nil && indexMultiplicacao != nil)
 				if(indexDivisao < indexMultiplicacao)
-					fazDivisoes
+					calculaOperacao("/", indexDivisao)
 				else
-					fazMultiplicacoes
+					calculaOperacao("*", indexMultiplicacao)
 				end
 			elsif(indexDivisao != nil && indexMultiplicacao == nil)
-				fazDivisoes
+				calculaOperacao("/", indexDivisao)
 			elsif(indexDivisao == nil && indexMultiplicacao != nil)
-				fazMultiplicacoes
+				calculaOperacao("*", indexMultiplicacao)
 			end
 		end
 
@@ -50,19 +46,20 @@ module CalculadoraRuby
 
 			if(indexSubtracao != nil && indexAdicao != nil)
 				if(indexSubtracao < indexAdicao)
-					fazSubtracoes
+					calculaOperacao("-", indexSubtracao)
 				else
-					fazAdicoes
+					calculaOperacao("+", indexAdicao)
 				end
 			elsif(indexSubtracao != nil && indexAdicao == nil)
-				fazSubtracoes
+				calculaOperacao("-", indexSubtracao)
 			elsif(indexSubtracao == nil && indexAdicao != nil)
-				fazAdicoes
+				calculaOperacao("+", indexAdicao)
 			end
 		end
 
-		def buscaPrimeiroNumeroIndex index
-			index.downto(0) do |i|
+		def buscaPrimeiroIndexDoPrimeiroNumero ultimoIndexDoPrimeiroNumero
+
+			ultimoIndexDoPrimeiroNumero.downto(0) do |i|
 				character = @calc_array[i];
 
         if character == "*" || character == "/" || character == "+" || character == "-"
@@ -73,8 +70,8 @@ module CalculadoraRuby
 			return 0
 		end
 
-		def buscaSegundoNumeroIndex index
-			(index..(@calc_array.length - 1)).each do |i|
+		def buscaUltimoIndexDoSegundoNumero primeiroIndexDoSegundoNumero
+			(primeiroIndexDoSegundoNumero..(@calc_array.length - 1)).each do |i|
 
 				character = @calc_array[i]
 
@@ -87,139 +84,66 @@ module CalculadoraRuby
 		end
 
 		def buscaNumeroNoRange(indexInicial, indexFinal)
-			primeiroNumero = "0"
+			# contatena os numeros do range no array como string
+			numero = "0"
 			(indexInicial..indexFinal).each do |i|
 				character = @calc_array[i]
-				primeiroNumero = primeiroNumero + character
+				numero = numero + character
 			end
 
-			return primeiroNumero.to_f
+			return numero.to_f
 		end
 
-		def deletaObjetoNoRangeDoArray(fromIndex, toIndex)
-			# puts "array a remover:"
-			# puts @calc_array
-
-			toIndex.downto(fromIndex) do |i|
-				# puts "i: "
-				# puts i
+		def deletaObjetoNoRangeDoArray(indexInicial, indexFinal)
+			indexFinal.downto(indexInicial) do |i|
 				@calc_array.delete_at(i)
-				# puts "array:"
-				# @calc_array
 			end
 		end
 
-		def fazMultiplicacoes
-			index = @calc_array.index("*")
+		def calculaOperacao(operacao, index)
 
-			if index != nil
-				if index >= 0
+			ultimoIndexDoPrimeiroNumero = index - 1
+			primeiroIndexDoSegundoNumero = index + 1
 
-					primeiroIndex = buscaPrimeiroNumeroIndex (index - 1)
-					segundoIndex = buscaSegundoNumeroIndex (index + 1)
+			primeiroIndexDoPrimeiroNumero = buscaPrimeiroIndexDoPrimeiroNumero(ultimoIndexDoPrimeiroNumero)
+			ultimoIndexDoSegundoNumero = buscaUltimoIndexDoSegundoNumero(primeiroIndexDoSegundoNumero)
 
-					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
-					segundoNumero = buscaNumeroNoRange((index + 1), segundoIndex)
+			primeiroNumero = buscaNumeroNoRange(primeiroIndexDoPrimeiroNumero, ultimoIndexDoPrimeiroNumero)
+			segundoNumero = buscaNumeroNoRange(primeiroIndexDoSegundoNumero, ultimoIndexDoSegundoNumero)
 
+			resultado = 0
+			ehOperacaoPrioritaria = false
+
+			case operacao
+				when "*"
 					resultado = primeiroNumero * segundoNumero
-
-					@calc_array[primeiroIndex] = "#{resultado}"
-
-					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
-
-					operacoesPrioritarias
-				end
-			end
-		end
-
-		def fazDivisoes
-			index = @calc_array.index("/")
-
-			if index != nil
-				if index >= 0
-
-					primeiroIndex = buscaPrimeiroNumeroIndex(index - 1)
-					segundoIndex = buscaSegundoNumeroIndex(index + 1)
-
-					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
-					segundoNumero = buscaNumeroNoRange((index + 1), segundoIndex)
-
+					ehOperacaoPrioritaria = true
+				when "/"
 					resultado = primeiroNumero / segundoNumero
-
-					@calc_array[primeiroIndex] = "#{resultado}"
-
-					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
-
-					operacoesPrioritarias
-				end
-			end
-		end
-
-		def fazAdicoes
-
-			index = @calc_array.index("+")
-
-			if index != nil
-				if index >= 0
-
-					primeiroIndex = buscaPrimeiroNumeroIndex (index - 1)
-					# puts "primeiroIndex: "
-					# puts primeiroIndex
-
-					segundoIndex = buscaSegundoNumeroIndex (index + 1)
-					# puts "segundoIndex: "
-					# puts segundoIndex
-
-					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
-					# puts "primeiroNumero: "
-					# puts primeiroNumero
-
-					segundoNumero = buscaNumeroNoRange((index + 1), segundoIndex)
-					# puts "segundoNumero: "
-					# puts segundoNumero
-
+					ehOperacaoPrioritaria = true
+				when "+"
 					resultado = primeiroNumero + segundoNumero
-					# puts "resultado: "
-					# puts resultado
-
-					@calc_array[primeiroIndex] = "#{resultado}"
-					# puts "novo item no index: "
-					# puts @calc_array[primeiroIndex]
-
-					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
-
-					# puts "novoarray: "
-					# puts @calc_array
-
-					operacoesSecundarias
-
-				end
-			end
-		end
-
-		def fazSubtracoes
-			index = @calc_array.index("-")
-
-			if index != nil
-				if index >= 0
-
-					primeiroIndex = buscaPrimeiroNumeroIndex (index - 1)
-					segundoIndex = buscaSegundoNumeroIndex (index + 1)
-
-					primeiroNumero = buscaNumeroNoRange(primeiroIndex, (index - 1))
-					segundoNumero = buscaNumeroNoRange((index + 1) , segundoIndex)
-
+				when "-"
 					resultado = primeiroNumero - segundoNumero
+				else
+					resultado = 0
+			end
 
-					@calc_array[primeiroIndex] = "#{resultado}"
+			@calc_array[primeiroIndexDoPrimeiroNumero] = "#{resultado}"
 
-					deletaObjetoNoRangeDoArray((primeiroIndex + 1), segundoIndex)
+			deletaObjetoNoRangeDoArray((primeiroIndexDoPrimeiroNumero + 1), ultimoIndexDoSegundoNumero)
 
-					operacoesSecundarias
-
-				end
+			if ehOperacaoPrioritaria
+				operacoesPrioritarias
+			else
+				operacoesSecundarias
 			end
 		end
 
 	end
 end
+
+c = CalculadoraRuby::Calc.new
+puts "Digite a expressao:"
+calcString = $stdin.readline()
+c.calcular calcString

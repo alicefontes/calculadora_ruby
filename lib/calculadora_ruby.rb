@@ -15,12 +15,15 @@ module CalculadoraRuby
 			operacoesPrioritarias
 			operacoesSecundarias
 
-			valorTotal = @calc_array[0].to_f
-
-			puts "---valorTotal: "
-			puts valorTotal
-
-			return valorTotal
+			resposta = @calc_array[0]
+			if resposta == "Erro de divisao por 0"
+				puts "---valorTotal: " + resposta
+				return resposta
+			else
+				valorTotal = @calc_array[0].to_f
+				puts "---valorTotal: #{valorTotal}"
+				return valorTotal
+			end
 		end
 
 		def operacoesPrioritarias
@@ -85,7 +88,7 @@ module CalculadoraRuby
 
 		def buscaNumeroNoRange(indexInicial, indexFinal)
 			# contatena os numeros do range no array como string
-			numero = "0"
+			numero = ""
 			(indexInicial..indexFinal).each do |i|
 				character = @calc_array[i]
 				numero = numero + character
@@ -100,10 +103,10 @@ module CalculadoraRuby
 			end
 		end
 
-		def calculaOperacao(operacao, index)
+		def calculaOperacao(operacao, indexDoSinal)
 
-			ultimoIndexDoPrimeiroNumero = index - 1
-			primeiroIndexDoSegundoNumero = index + 1
+			ultimoIndexDoPrimeiroNumero = indexDoSinal - 1
+			primeiroIndexDoSegundoNumero = indexDoSinal + 1
 
 			primeiroIndexDoPrimeiroNumero = buscaPrimeiroIndexDoPrimeiroNumero(ultimoIndexDoPrimeiroNumero)
 			ultimoIndexDoSegundoNumero = buscaUltimoIndexDoSegundoNumero(primeiroIndexDoSegundoNumero)
@@ -119,6 +122,10 @@ module CalculadoraRuby
 					resultado = primeiroNumero * segundoNumero
 					ehOperacaoPrioritaria = true
 				when "/"
+					if segundoNumero == 0
+						@calc_array = ["Erro de divisao por 0"]
+						return
+					end
 					resultado = primeiroNumero / segundoNumero
 					ehOperacaoPrioritaria = true
 				when "+"

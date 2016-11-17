@@ -1,12 +1,7 @@
 require "calculadora_ruby/version"
 
 module CalculadoraRuby
-
 	class Calc
-
-		def initialize
-		end
-
 		def calcular calc_string
 			@calc_array = calc_string.split('')
 
@@ -61,9 +56,8 @@ module CalculadoraRuby
 		end
 
 		def buscaPrimeiroIndexDoPrimeiroNumero ultimoIndexDoPrimeiroNumero
-
 			ultimoIndexDoPrimeiroNumero.downto(0) do |i|
-				character = @calc_array[i];
+				character = @calc_array[i]
 
         if character == "*" || character == "/" || character == "+" || character == "-"
 					return i + 1
@@ -104,7 +98,6 @@ module CalculadoraRuby
 		end
 
 		def calculaOperacao(operacao, indexDoSinal)
-
 			ultimoIndexDoPrimeiroNumero = indexDoSinal - 1
 			primeiroIndexDoSegundoNumero = indexDoSinal + 1
 
@@ -146,11 +139,10 @@ module CalculadoraRuby
 				operacoesSecundarias
 			end
 		end
-
 	end
 end
 
-c = CalculadoraRuby::Calc.new
-puts "Digite a expressao:"
-calcString = $stdin.readline()
-c.calcular calcString
+# c = CalculadoraRuby::Calc.new
+# puts "Digite a expressao:"
+# calcString = $stdin.readline()
+# c.calcular calcString

@@ -12,11 +12,11 @@ module CalculadoraRuby
 
 			resposta = @calc_array[0]
 			if resposta == "Erro de divisao por 0"
-				puts "---valorTotal: " + resposta
+				# puts "---valorTotal: " + resposta
 				return resposta
 			else
 				valorTotal = @calc_array[0].to_f
-				puts "---valorTotal: #{valorTotal}"
+				# puts "---valorTotal: #{valorTotal}"
 				return valorTotal
 			end
 		end
